@@ -6,17 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PawsID - Dog Profile & QR Code System</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- QRCode.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
@@ -73,7 +69,7 @@
         <header id="main-header"
             class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
 
-            <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 h-16 flex items-center justify-between">
+            <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 min-h-20 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
 
                 <!-- LOGO -->
                 <div class="flex items-center gap-3 cursor-pointer"
@@ -94,22 +90,24 @@
                     </div>
                 </div>
 
-                <!-- DEVELOPER NAME HIGHLIGHT -->
-                <div class="flex items-center gap-3">
+                <!-- DEVELOPER NAME -->
+                <div class="flex items-center justify-center gap-3">
 
-                    <div class="hidden sm:block text-right">
-                        <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">
+                    <div class="text-center sm:text-right">
+
+                        <p class="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-slate-400">
                             Website Developed By
                         </p>
 
-                        <p class="text-sm font-extrabold developer-name">
+                        <p class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight developer-name leading-tight">
                             <i class="fa-solid fa-code mr-1"></i>
-                            Shail Patel
+                            SHAIL PATEL
                         </p>
+
                     </div>
 
-                    <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center shadow-sm">
-                        <i class="fa-solid fa-laptop-code text-lg"></i>
+                    <div class="w-11 h-11 rounded-xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center shadow-sm shrink-0">
+                        <i class="fa-solid fa-laptop-code text-xl"></i>
                     </div>
 
                 </div>
@@ -121,7 +119,6 @@
         <main id="view-dashboard"
             class="flex-grow w-full px-4 sm:px-8 lg:px-12 xl:px-16 py-8">
 
-            <!-- DASHBOARD HEADING -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
 
                 <div>
@@ -311,6 +308,10 @@
                             class="mt-4 text-xs font-bold text-brand-600 hover:underline">
                             Go to Dashboard
                         </button>
+
+                        <p class="mt-4 text-[11px] font-extrabold tracking-widest developer-name">
+                            POWERED BY SHAIL PATEL
+                        </p>
 
                     </div>
 
@@ -507,6 +508,11 @@
                 Scan this QR code with any smartphone camera or Google Lens to view dog details.
             </p>
 
+            <!-- DEVELOPER NAME ABOVE QR -->
+            <p class="text-lg font-extrabold developer-name tracking-wide mb-3">
+                SHAIL PATEL
+            </p>
+
             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex justify-center mb-4">
                 <div id="qrcode-target"></div>
             </div>
@@ -564,7 +570,7 @@
             </div>
 
             <p class="text-xs text-slate-500 mt-5">
-                © 2026 PawsID. All Rights Reserved.
+                ©️ 2026 PawsID. All Rights Reserved.
             </p>
 
         </div>
@@ -690,7 +696,6 @@
                 card.className =
                     'bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between';
 
-                // Build card using DOM elements to safely display user-entered text.
                 const content = document.createElement('div');
 
                 const imageContainer = document.createElement('div');
@@ -987,17 +992,70 @@
 
         }
 
-        // DOWNLOAD QR CODE
+        // DOWNLOAD BRANDED QR CODE
         function downloadQRCode() {
 
-            const canvas = document.querySelector('#qrcode-target canvas');
+            const qrCanvas = document.querySelector('#qrcode-target canvas');
 
-            if (!canvas) return;
+            if (!qrCanvas) return;
 
+            const padding = 24;
+            const titleHeight = 58;
+            const footerHeight = 48;
+
+            const brandedCanvas = document.createElement('canvas');
+
+            brandedCanvas.width = qrCanvas.width + padding * 2;
+
+            brandedCanvas.height =
+                titleHeight + qrCanvas.height + footerHeight + padding * 2;
+
+            const ctx = brandedCanvas.getContext('2d');
+
+            // White background
+            ctx.fillStyle = '#ffffff';
+
+            ctx.fillRect(
+                0,
+                0,
+                brandedCanvas.width,
+                brandedCanvas.height
+            );
+
+            // Developer name
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#ea580c';
+            ctx.font = 'bold 22px Arial';
+
+            ctx.fillText(
+                'SHAIL PATEL',
+                brandedCanvas.width / 2,
+                39
+            );
+
+            // QR Code
+            ctx.drawImage(
+                qrCanvas,
+                padding,
+                titleHeight + padding
+            );
+
+            // Footer branding
+            ctx.fillStyle = '#64748b';
+            ctx.font = 'bold 11px Arial';
+
+            ctx.fillText(
+                'PAWSID • PET SAFETY QR',
+                brandedCanvas.width / 2,
+                titleHeight + padding + qrCanvas.height + 28
+            );
+
+            // Download image
             const link = document.createElement('a');
 
-            link.download = 'dog-safety-qr.png';
-            link.href = canvas.toDataURL('image/png');
+            link.download = 'pawsid-branded-qr.png';
+
+            link.href = brandedCanvas.toDataURL('image/png');
 
             link.click();
 
