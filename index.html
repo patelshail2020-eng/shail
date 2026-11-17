@@ -1,636 +1,1050 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PawsID - Dog Identification System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawsID - Dog Profile & QR Code System</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-body {
-    background: #f3f6fb;
-    color: #1e293b;
-}
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-/* DEVELOPER BANNER AT THE TOP */
-.developer-banner {
-    width: 100%;
-    text-align: center;
-    padding: 22px 10px;
-    background: linear-gradient(135deg, #101827, #263b5c);
-    color: white;
-}
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-.developer-banner h1 {
-    font-size: 30px;
-    letter-spacing: 4px;
-    color: #ffb347;
-    margin-bottom: 6px;
-}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 
-.developer-banner p {
-    font-size: 13px;
-    letter-spacing: 1px;
-    color: #e2e8f0;
-}
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
 
-/* USER UPPER BANNER */
-.user-upper-bar {
-    background: #eff6ff;
-    border-bottom: 1px solid #dbeafe;
-    padding: 10px 7%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-.user-upper-bar span {
-    color: #1e40af;
-    font-weight: bold;
-}
-
-.user-upper-bar button {
-    padding: 6px 12px;
-    font-size: 12px;
-}
-
-/* NAVIGATION */
-nav {
-    background: #ffffff;
-    padding: 18px 7%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 3px 12px #00000012;
-}
-
-.logo {
-    font-size: 25px;
-    font-weight: bold;
-    color: #2563eb;
-}
-
-nav a {
-    text-decoration: none;
-    color: #334155;
-    margin-left: 20px;
-    font-weight: bold;
-}
-
-.hero {
-    text-align: center;
-    padding: 65px 20px;
-    background: linear-gradient(135deg, #dbeafe, #eff6ff);
-}
-
-.hero h1 {
-    font-size: 38px;
-    margin-bottom: 12px;
-    color: #1e3a8a;
-}
-
-.hero p {
-    color: #475569;
-    font-size: 17px;
-}
-
-.container {
-    width: 90%;
-    max-width: 1050px;
-    margin: 35px auto;
-}
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px #0000000d;
-    margin-bottom: 25px;
-}
-
-.card h2 {
-    margin-bottom: 20px;
-    color: #1e40af;
-}
-
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 15px;
-}
-
-button {
-    border: none;
-    padding: 11px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    margin: 4px;
-}
-
-.primary {
-    background: #2563eb;
-    color: white;
-}
-
-.danger {
-    background: #dc2626;
-    color: white;
-}
-
-.secondary {
-    background: #0f766e;
-    color: white;
-}
-
-.dog-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.dog-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    background: #ffffff;
-}
-
-.dog-card h3 {
-    color: #1d4ed8;
-    margin-bottom: 10px;
-}
-
-.dog-card p {
-    margin: 7px 0;
-    overflow-wrap: anywhere;
-}
-
-#qrArea {
-    text-align: center;
-    margin-top: 20px;
-}
-
-#qrcode {
-    display: inline-block;
-    padding: 12px;
-    background: white;
-}
-
-.profile {
-    max-width: 500px;
-    margin: 35px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px #00000012;
-}
-
-.profile h2 {
-    color: #1d4ed8;
-    margin-bottom: 15px;
-}
-
-.profile p {
-    margin: 12px 0;
-    overflow-wrap: anywhere;
-}
-
-footer {
-    text-align: center;
-    padding: 25px;
-    background: #101827;
-    color: white;
-    margin-top: 50px;
-}
-
-footer strong {
-    color: #ffb347;
-}
-
-.hidden {
-    display: none;
-}
-
-@media(max-width:600px) {
-    nav {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    nav a {
-        margin: 0 7px;
-    }
-
-    .hero h1 {
-        font-size: 29px;
-    }
-
-    .developer-banner h1 {
-        font-size: 25px;
-    }
-
-    .user-upper-bar {
-        flex-direction: column;
-        gap: 8px;
-        text-align: center;
-    }
-}
-</style>
+        .developer-name {
+            background: linear-gradient(90deg, #f97316, #ea580c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
-<!-- DEVELOPER NAME: FIRST THING ON THE PAGE -->
-<div class="developer-banner">
-    <h1>SHAIL PATEL</h1>
-    <p>WEBSITE DESIGNED & DEVELOPED BY</p>
-    <p>Developer of PawsID</p>
-</div>
-
-<!-- USER UPPER BAR -->
-<div class="user-upper-bar">
-    <div>👤 Welcome, <span id="displayUserName">Guest User</span></div>
-    <button class="secondary" onclick="changeUserName()">Change Name</button>
-</div>
-
-<nav>
-    <div class="logo">🐾 PawsID</div>
-    <div>
-        <a href="#home">Home</a>
-        <a href="#register">Register Dog</a>
-        <a href="#directory">Dog Directory</a>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-container"
+        class="fixed top-5 right-5 z-[100] flex flex-col gap-2 max-w-sm">
     </div>
-</nav>
 
-<section class="hero" id="home">
-    <h1>Welcome to PawsID</h1>
-    <p>A smart digital identity system for dogs.</p>
-</section>
+    <!-- MAIN APP -->
+    <div id="app" class="flex-grow flex flex-col">
 
-<main class="container" id="app">
+        <!-- NAVIGATION HEADER -->
+        <header id="main-header"
+            class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
 
-    <section class="card" id="register">
-        <h2 id="formTitle">🐶 Register Your Dog</h2>
+            <div class="w-full px-4 sm:px-8 lg:px-12 xl:px-16 h-16 flex items-center justify-between">
 
-        <form id="dogForm">
-            <input type="text" id="dogName" placeholder="Dog Name" required>
-            <input type="text" id="breed" placeholder="Breed" required>
-            <input type="text" id="age" placeholder="Age">
-            <input type="text" id="owner" placeholder="Owner Name" required>
-            <input type="tel" id="phone" placeholder="Owner Phone Number" required>
-            <textarea id="address" placeholder="Address" rows="3"></textarea>
+                <!-- LOGO -->
+                <div class="flex items-center gap-3 cursor-pointer"
+                    onclick="navigateTo('dashboard')">
 
-            <button class="primary" type="submit" id="saveButton">
-                Register Dog
-            </button>
-            <button type="button" class="danger hidden" id="cancelEdit">
-                Cancel Edit
-            </button>
-        </form>
-    </section>
+                    <div class="w-10 h-10 rounded-xl bg-brand-500 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-brand-500/20">
+                        <i class="fa-solid fa-dog"></i>
+                    </div>
 
-    <section class="card" id="directory">
-        <h2>🐕 Registered Dogs</h2>
-        <div class="dog-list" id="dogList"></div>
-        <p id="emptyMessage">No dogs registered yet.</p>
-    </section>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-tight text-slate-900">
+                            Paws<span class="text-brand-500">ID</span>
+                        </span>
 
-    <section class="card hidden" id="qrArea">
-        <h2>Dog QR Code</h2>
-        <div id="qrcode"></div>
-        <p id="qrDescription"></p>
-        <button class="primary" onclick="downloadQR()">Download QR</button>
-        <button class="secondary" onclick="copyProfileLink()">Copy Profile Link</button>
-    </section>
+                        <span class="hidden sm:inline-block text-xs bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full font-medium ml-2">
+                            Pet Safety
+                        </span>
+                    </div>
+                </div>
 
-</main>
+                <!-- DEVELOPER NAME HIGHLIGHT -->
+                <div class="flex items-center gap-3">
 
-<!-- PUBLIC DOG PROFILE -->
-<section class="profile hidden" id="publicProfile">
-    <h2>🐾 PawsID Dog Profile</h2>
-    <div id="profileDetails"></div>
-    <div id="profileActions"></div>
-</section>
+                    <div class="hidden sm:block text-right">
+                        <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">
+                            Website Developed By
+                        </p>
 
-<footer>
-    <p>© 2026 PawsID - Dog Identification System</p>
-    <p>Designed & Developed by <strong>SHAIL PATEL</strong></p>
-</footer>
+                        <p class="text-sm font-extrabold developer-name">
+                            <i class="fa-solid fa-code mr-1"></i>
+                            Shail Patel
+                        </p>
+                    </div>
 
-<script>
-const STORAGE_KEY = "paws_dogs_directory";
-const USER_KEY = "paws_user_name";
+                    <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-laptop-code text-lg"></i>
+                    </div>
 
-let dogs = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-let editingId = null;
-let currentProfileLink = "";
+                </div>
 
-const dogForm = document.getElementById("dogForm");
-const dogList = document.getElementById("dogList");
+            </div>
+        </header>
 
-function saveDogs() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dogs));
-}
+        <!-- DASHBOARD -->
+        <main id="view-dashboard"
+            class="flex-grow w-full px-4 sm:px-8 lg:px-12 xl:px-16 py-8">
 
-function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[char]);
-}
+            <!-- DASHBOARD HEADING -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
 
-function makeId() {
-    return "DOG-" + Date.now().toString(36).toUpperCase();
-}
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                        My Dogs Directory
+                    </h2>
 
-function loadUserName() {
-    let savedName = localStorage.getItem(USER_KEY);
-    if (!savedName) {
-        savedName = prompt("Please enter your name for the upper user panel:", "Dog Lover");
-        if (!savedName || savedName.trim() === "") {
-            savedName = "Guest User";
-        }
-        localStorage.setItem(USER_KEY, savedName.trim());
-    }
-    document.getElementById("displayUserName").textContent = savedName;
-}
+                    <p class="text-slate-500 text-sm mt-1">
+                        Manage profiles and instantly generate smart QR codes for collars.
+                    </p>
+                </div>
 
-function changeUserName() {
-    let newName = prompt("Enter new user name:", localStorage.getItem(USER_KEY) || "");
-    if (newName && newName.trim() !== "") {
-        localStorage.setItem(USER_KEY, newName.trim());
-        document.getElementById("displayUserName").textContent = newName.trim();
-    }
-}
+                <button onclick="openDogModal()"
+                    class="inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white font-bold px-5 py-3 rounded-xl shadow-md shadow-brand-500/20 transition">
 
-function renderDogs() {
-    dogList.innerHTML = "";
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Register New Dog</span>
 
-    document.getElementById("emptyMessage").style.display =
-        dogs.length ? "none" : "block";
+                </button>
+            </div>
 
-    dogs.forEach(dog => {
-        const card = document.createElement("div");
-        card.className = "dog-card";
+            <!-- DOG CARDS -->
+            <div id="dogs-grid"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
 
-        card.innerHTML = `
-            <h3>🐶 ${escapeHTML(dog.name)}</h3>
-            <p><strong>ID:</strong> ${escapeHTML(dog.id)}</p>
-            <p><strong>Breed:</strong> ${escapeHTML(dog.breed)}</p>
-            <p><strong>Age:</strong> ${escapeHTML(dog.age)}</p>
-            <p><strong>Owner:</strong> ${escapeHTML(dog.owner)}</p>
+            <!-- EMPTY STATE -->
+            <div id="empty-state"
+                class="hidden text-center py-16 bg-white rounded-3xl border border-dashed border-slate-300 p-8">
 
-            <button class="primary" data-action="qr" data-id="${escapeHTML(dog.id)}">
-                Generate QR
-            </button>
-            <button class="secondary" data-action="edit" data-id="${escapeHTML(dog.id)}">
-                Edit
-            </button>
-            <button class="danger" data-action="delete" data-id="${escapeHTML(dog.id)}">
-                Delete
-            </button>
-        `;
+                <div class="w-20 h-20 bg-brand-50 text-brand-500 rounded-full flex items-center justify-center mx-auto text-3xl mb-4">
+                    <i class="fa-solid fa-dog"></i>
+                </div>
 
-        dogList.appendChild(card);
-    });
-}
+                <h3 class="text-lg font-bold text-slate-800">
+                    No Dogs Registered Yet
+                </h3>
 
-dogList.addEventListener("click", event => {
-    const button = event.target.closest("button[data-action]");
-    if (!button) return;
+                <p class="text-slate-500 text-sm max-w-sm mx-auto mt-1 mb-6">
+                    Create your dog's profile to get a scannable QR Code identification card.
+                </p>
 
-    const dog = dogs.find(item => item.id === button.dataset.id);
-    if (!dog) return;
+                <button onclick="openDogModal()"
+                    class="inline-flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white font-bold px-5 py-2.5 rounded-xl transition">
 
-    if (button.dataset.action === "qr") {
-        generateQR(dog);
-    }
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add Dog Now</span>
 
-    if (button.dataset.action === "edit") {
-        editDog(dog);
-    }
+                </button>
+            </div>
 
-    if (button.dataset.action === "delete") {
-        deleteDog(dog.id);
-    }
-});
+        </main>
 
-dogForm.addEventListener("submit", event => {
-    event.preventDefault();
+        <!-- PUBLIC DOG SCANNER PAGE -->
+        <main id="view-public"
+            class="flex-grow flex items-center justify-center p-4 bg-slate-900 hidden">
 
-    const dogData = {
-        name: document.getElementById("dogName").value.trim(),
-        breed: document.getElementById("breed").value.trim(),
-        age: document.getElementById("age").value.trim(),
-        owner: document.getElementById("owner").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        address: document.getElementById("address").value.trim()
-    };
+            <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden my-6 border border-slate-800">
 
-    if (editingId) {
-        const index = dogs.findIndex(dog => dog.id === editingId);
-        if (index !== -1) {
-            dogs[index] = { ...dogs[index], ...dogData };
-        }
-        editingId = null;
-    } else {
-        dogs.push({
-            id: makeId(),
-            ...dogData
+                <div class="bg-red-500 text-white text-center py-2 px-4 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+
+                    <i class="fa-solid fa-shield-cat animate-pulse"></i>
+                    <span>Pet Safety Identification Card</span>
+
+                </div>
+
+                <!-- DOG IMAGE -->
+                <div class="relative h-64 sm:h-72 bg-slate-200">
+
+                    <img id="pub-photo"
+                        src=""
+                        alt="Dog Photo"
+                        class="w-full h-full object-cover">
+
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+
+                        <div class="text-white">
+
+                            <span id="pub-breed-badge"
+                                class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-2 uppercase tracking-wider">
+                            </span>
+
+                            <h1 id="pub-name"
+                                class="text-3xl sm:text-4xl font-black leading-none">
+                            </h1>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOG DETAILS -->
+                <div class="p-6 space-y-6">
+
+                    <div class="grid grid-cols-2 gap-3 text-center">
+
+                        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-100">
+                            <span class="block text-xs font-semibold text-slate-400 uppercase">
+                                Age
+                            </span>
+
+                            <span id="pub-age"
+                                class="text-base font-extrabold text-slate-800">
+                            </span>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-100">
+                            <span class="block text-xs font-semibold text-slate-400 uppercase">
+                                Gender
+                            </span>
+
+                            <span id="pub-gender"
+                                class="text-base font-extrabold text-slate-800">
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <!-- OWNER CONTACT -->
+                    <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200/60">
+
+                        <div class="flex items-center gap-3 mb-3">
+
+                            <div class="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+
+                            <div>
+                                <span class="text-xs font-bold text-amber-700 uppercase tracking-wide block">
+                                    Owner Name
+                                </span>
+
+                                <span id="pub-owner-name"
+                                    class="text-base font-bold text-slate-900">
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 mt-3">
+
+                            <a id="pub-phone-link"
+                                href="#"
+                                class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-3 rounded-xl text-xs sm:text-sm shadow-md transition">
+
+                                <i class="fa-solid fa-phone"></i>
+                                <span>Call Owner</span>
+
+                            </a>
+
+                            <a id="pub-whatsapp-link"
+                                href="#"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-3 rounded-xl text-xs sm:text-sm shadow-md transition">
+
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                                <span>WhatsApp</span>
+
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <!-- MEDICAL NOTES -->
+                    <div>
+
+                        <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">
+                            Important Medical & Care Notes
+                        </h4>
+
+                        <div id="pub-notes-container"
+                            class="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-sm text-slate-700 leading-relaxed italic">
+
+                            <p id="pub-notes"></p>
+
+                        </div>
+                    </div>
+
+                    <!-- SCAN NOTICE -->
+                    <div class="text-center pt-2 border-t border-slate-100">
+
+                        <p class="text-xs text-slate-400 font-medium">
+                            Found this dog? Please contact the owner immediately!
+                        </p>
+
+                        <button onclick="window.location.href = window.location.pathname"
+                            class="mt-4 text-xs font-bold text-brand-600 hover:underline">
+                            Go to Dashboard
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- DOG REGISTRATION MODAL -->
+    <div id="modal-dog"
+        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+
+        <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto">
+
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
+
+                <h3 id="modal-title"
+                    class="text-xl font-bold text-slate-900">
+                    Register Dog Details
+                </h3>
+
+                <button onclick="closeDogModal()"
+                    class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+            </div>
+
+            <form id="form-dog"
+                onsubmit="handleSaveDog(event)"
+                class="p-6 space-y-4">
+
+                <input type="hidden" id="dog-id">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Dog Name *
+                        </label>
+
+                        <input type="text"
+                            id="dog-name"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            placeholder="e.g. Max">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Breed *
+                        </label>
+
+                        <input type="text"
+                            id="dog-breed"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            placeholder="e.g. Golden Retriever">
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Age *
+                        </label>
+
+                        <input type="text"
+                            id="dog-age"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            placeholder="e.g. 3 Years">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Gender *
+                        </label>
+
+                        <select id="dog-gender"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Owner Name *
+                        </label>
+
+                        <input type="text"
+                            id="dog-owner"
+                            required
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            placeholder="e.g. John Doe">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Contact Phone (10 Digits) *
+                        </label>
+
+                        <input type="tel"
+                            id="dog-phone"
+                            required
+                            maxlength="10"
+                            pattern="[0-9]{10}"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            placeholder="e.g. 9876543210"
+                            title="Please enter a valid 10-digit phone number">
+                    </div>
+
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                        Dog Photo URL
+                    </label>
+
+                    <input type="url"
+                        id="dog-photo-url"
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        placeholder="https://images.unsplash.com/photo-...">
+
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Paste a valid image web URL.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                        Medical / Care Notes
+                    </label>
+
+                    <textarea id="dog-notes"
+                        rows="3"
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        placeholder="e.g. Friendly with kids. Requires special care."></textarea>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
+
+                    <button type="button"
+                        onclick="closeDogModal()"
+                        class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm shadow-md shadow-brand-500/20">
+                        Save Profile
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- QR CODE MODAL -->
+    <div id="modal-qr"
+        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center">
+
+            <div class="flex justify-between items-center mb-4">
+
+                <h3 class="text-lg font-bold text-slate-900">
+                    Dog Tag QR Code
+                </h3>
+
+                <button onclick="closeQRModal()"
+                    class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500 mb-4">
+                Scan this QR code with any smartphone camera or Google Lens to view dog details.
+            </p>
+
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex justify-center mb-4">
+                <div id="qrcode-target"></div>
+            </div>
+
+            <div class="space-y-2">
+
+                <button onclick="downloadQRCode()"
+                    class="w-full py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2">
+
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download QR Code Image</span>
+
+                </button>
+
+                <button onclick="copyQRLink()"
+                    class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+
+                    <i class="fa-solid fa-link"></i>
+                    <span>Copy Public Scanner URL</span>
+
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- DEVELOPER FOOTER -->
+    <footer class="bg-slate-900 text-white py-8 px-4 mt-auto">
+
+        <div class="max-w-5xl mx-auto text-center">
+
+            <div class="flex items-center justify-center gap-2 mb-3">
+
+                <i class="fa-solid fa-code text-brand-500 text-lg"></i>
+
+                <span class="text-sm font-semibold text-slate-300 tracking-wide">
+                    DESIGNED & DEVELOPED BY
+                </span>
+
+            </div>
+
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-wide text-brand-500">
+                Shail Patel
+            </h2>
+
+            <p class="text-sm text-slate-400 mt-3">
+                Developer of PawsID – Dog Profile & QR Code System
+            </p>
+
+            <div class="w-20 h-1 bg-brand-500 rounded-full mx-auto mt-5 mb-4"></div>
+
+            <div class="flex items-center justify-center gap-2 text-xs text-slate-500">
+                <i class="fa-solid fa-paw text-brand-500"></i>
+                <span>Making Pet Identification Smarter and Safer</span>
+            </div>
+
+            <p class="text-xs text-slate-500 mt-5">
+                © 2026 PawsID. All Rights Reserved.
+            </p>
+
+        </div>
+
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+
+        let dogsList = [];
+        let activeQRUrl = '';
+
+        const DEFAULT_DOG_PHOTO =
+            'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800';
+
+        // INITIALIZER
+        window.addEventListener('DOMContentLoaded', () => {
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const rawDogData = urlParams.get('dogData');
+
+            if (rawDogData) {
+
+                try {
+
+                    const dog = JSON.parse(rawDogData);
+                    displayPublicDogCard(dog);
+
+                } catch (error) {
+
+                    console.error('Failed to parse dog data', error);
+                    showToast('Unable to load dog profile.');
+
+                }
+
+            } else {
+
+                loadUserDogs();
+                navigateTo('dashboard');
+
+            }
+
         });
-    }
 
-    saveDogs();
-    renderDogs();
-    resetForm();
+        // NAVIGATION
+        function navigateTo(view) {
 
-    alert("Dog information saved successfully!");
-});
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-public').classList.add('hidden');
 
-function editDog(dog) {
-    editingId = dog.id;
+            if (view === 'dashboard') {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+            }
 
-    document.getElementById("dogName").value = dog.name;
-    document.getElementById("breed").value = dog.breed;
-    document.getElementById("age").value = dog.age;
-    document.getElementById("owner").value = dog.owner;
-    document.getElementById("phone").value = dog.phone;
-    document.getElementById("address").value = dog.address;
+            if (view === 'public') {
+                document.getElementById('view-public').classList.remove('hidden');
+            }
 
-    document.getElementById("formTitle").textContent = "✏️ Edit Dog Details";
-    document.getElementById("saveButton").textContent = "Update Dog";
-    document.getElementById("cancelEdit").classList.remove("hidden");
+        }
 
-    document.getElementById("register").scrollIntoView({behavior: "smooth"});
-}
+        // LOAD DOGS
+        function loadUserDogs() {
 
-function resetForm() {
-    dogForm.reset();
-    editingId = null;
+            try {
 
-    document.getElementById("formTitle").textContent = "🐶 Register Your Dog";
-    document.getElementById("saveButton").textContent = "Register Dog";
-    document.getElementById("cancelEdit").classList.add("hidden");
-}
+                const stored = localStorage.getItem('paws_dogs_directory');
+                dogsList = stored ? JSON.parse(stored) : [];
 
-document.getElementById("cancelEdit").addEventListener("click", resetForm);
+                if (!Array.isArray(dogsList)) {
+                    dogsList = [];
+                }
 
-function deleteDog(id) {
-    if (!confirm("Are you sure you want to delete this dog?")) return;
+            } catch (error) {
 
-    dogs = dogs.filter(dog => dog.id !== id);
-    saveDogs();
-    renderDogs();
-}
+                dogsList = [];
+                showToast('Unable to load saved profiles.');
 
-function getProfileURL(id) {
-    const url = new URL(window.location.href);
-    url.search = "";
-    url.hash = "";
-    url.searchParams.set("id", id);
-    return url.toString();
-}
+            }
 
-function generateQR(dog) {
-    const qrArea = document.getElementById("qrArea");
-    const qrBox = document.getElementById("qrcode");
+            renderDogsGrid();
 
-    qrBox.innerHTML = "";
-    currentProfileLink = getProfileURL(dog.id);
+        }
 
-    new QRCode(qrBox, {
-        text: currentProfileLink,
-        width: 200,
-        height: 200,
-        correctLevel: QRCode.CorrectLevel.H
-    });
+        // SAVE DOGS
+        function saveUserDogs() {
 
-    document.getElementById("qrDescription").textContent =
-        "QR code for " + dog.name + " (" + dog.id + ")";
+            try {
 
-    qrArea.classList.remove("hidden");
-    qrArea.scrollIntoView({behavior: "smooth"});
-}
+                localStorage.setItem(
+                    'paws_dogs_directory',
+                    JSON.stringify(dogsList)
+                );
 
-function downloadQR() {
-    const qrImage = document.querySelector("#qrcode img");
-    const qrCanvas = document.querySelector("#qrcode canvas");
+            } catch (error) {
 
-    let imageURL = qrImage?.src;
+                showToast('Unable to save profiles in this browser.');
 
-    if (!imageURL && qrCanvas) {
-        imageURL = qrCanvas.toDataURL("image/png");
-    }
+            }
 
-    if (!imageURL) {
-        alert("Please generate a QR code first.");
-        return;
-    }
+        }
 
-    const link = document.createElement("a");
-    link.href = imageURL;
-    link.download = "PawsID-Dog-QR.png";
-    link.click();
-}
+        // RENDER DOG CARDS
+        function renderDogsGrid() {
 
-async function copyProfileLink() {
-    if (!currentProfileLink) return;
+            const container = document.getElementById('dogs-grid');
+            const emptyState = document.getElementById('empty-state');
 
-    try {
-        await navigator.clipboard.writeText(currentProfileLink);
-        alert("Profile link copied!");
-    } catch {
-        prompt("Copy this profile link:", currentProfileLink);
-    }
-}
+            container.innerHTML = '';
 
-function showPublicProfile(id) {
-    const dog = dogs.find(item => item.id === id);
+            if (dogsList.length === 0) {
 
-    document.getElementById("app").classList.add("hidden");
-    document.querySelector("nav").classList.add("hidden");
-    document.querySelector(".hero").classList.add("hidden");
-    document.querySelector(".user-upper-bar").classList.add("hidden");
+                emptyState.classList.remove('hidden');
+                return;
 
-    const profile = document.getElementById("publicProfile");
-    profile.classList.remove("hidden");
+            }
 
-    if (!dog) {
-        document.getElementById("profileDetails").textContent =
-            "Dog profile not found. This ID may not be registered in this browser.";
-        return;
-    }
+            emptyState.classList.add('hidden');
 
-    document.getElementById("profileDetails").innerHTML = `
-        <p><strong>Dog ID:</strong> ${escapeHTML(dog.id)}</p>
-        <p><strong>Name:</strong> ${escapeHTML(dog.name)}</p>
-        <p><strong>Breed:</strong> ${escapeHTML(dog.breed)}</p>
-        <p><strong>Age:</strong> ${escapeHTML(dog.age)}</p>
-        <p><strong>Owner:</strong> ${escapeHTML(dog.owner)}</p>
-        <p><strong>Address:</strong> ${escapeHTML(dog.address)}</p>
-    `;
+            dogsList.forEach(dog => {
 
-    const actions = document.getElementById("profileActions");
-    actions.innerHTML = "";
+                const card = document.createElement('div');
 
-    if (dog.phone) {
-        const call = document.createElement("a");
-        call.href = "tel:" + dog.phone.replace(/[^\d+]/g, "");
-        call.textContent = "📞 Call Owner";
-        call.className = "primary";
-        call.style.display = "inline-block";
-        call.style.padding = "12px";
-        call.style.borderRadius = "8px";
-        call.style.textDecoration = "none";
-        call.style.margin = "8px";
-        actions.appendChild(call);
+                card.className =
+                    'bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between';
 
-        const whatsapp = document.createElement("a");
-        const phoneNumber = dog.phone.replace(/\D/g, "");
-        whatsapp.href = "https://wa.me/" + phoneNumber;
-        whatsapp.target = "_blank";
-        whatsapp.rel = "noopener";
-        whatsapp.textContent = "💬 WhatsApp Owner";
-        whatsapp.className = "secondary";
-        whatsapp.style.display = "inline-block";
-        whatsapp.style.padding = "12px";
-        whatsapp.style.borderRadius = "8px";
-        whatsapp.style.textDecoration = "none";
-        whatsapp.style.margin = "8px";
-        actions.appendChild(whatsapp);
-    }
-}
+                // Build card using DOM elements to safely display user-entered text.
+                const content = document.createElement('div');
 
-function initialize() {
-    loadUserName();
-    const params = new URLSearchParams(window.location.search);
-    const dogId = params.get("id");
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'relative h-48 bg-slate-100';
 
-    if (dogId) {
-        showPublicProfile(dogId);
-    } else {
-        renderDogs();
-    }
-}
+                const img = document.createElement('img');
+                img.src = dog.photo || DEFAULT_DOG_PHOTO;
+                img.alt = dog.name || 'Dog';
+                img.className = 'w-full h-full object-cover';
 
-initialize();
-</script>
+                img.onerror = function () {
+                    this.onerror = null;
+                    this.src = 'https://placehold.co/600x400/ea580c/ffffff?text=Dog';
+                };
+
+                const gender = document.createElement('span');
+                gender.className =
+                    'absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-slate-700 shadow-sm';
+                gender.textContent = dog.gender;
+
+                imageContainer.append(img, gender);
+
+                const details = document.createElement('div');
+                details.className = 'p-5';
+
+                const heading = document.createElement('div');
+                heading.className = 'flex justify-between items-start mb-2';
+
+                const nameArea = document.createElement('div');
+
+                const name = document.createElement('h3');
+                name.className = 'text-xl font-extrabold text-slate-900';
+                name.textContent = dog.name;
+
+                const breed = document.createElement('p');
+                breed.className = 'text-xs font-semibold text-brand-600';
+                breed.textContent = dog.breed;
+
+                nameArea.append(name, breed);
+
+                const age = document.createElement('span');
+                age.className =
+                    'bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-lg font-bold';
+                age.textContent = dog.age;
+
+                heading.append(nameArea, age);
+
+                const ownerInfo = document.createElement('div');
+                ownerInfo.className = 'text-xs text-slate-500 space-y-1 mt-3';
+
+                const ownerLine = document.createElement('p');
+                ownerLine.textContent = 'Owner: ' + dog.owner;
+
+                const phoneLine = document.createElement('p');
+                phoneLine.textContent = 'Phone: ' + dog.phone;
+
+                ownerInfo.append(ownerLine, phoneLine);
+                details.append(heading, ownerInfo);
+
+                content.append(imageContainer, details);
+
+                // ACTION BUTTONS
+                const actions = document.createElement('div');
+                actions.className = 'p-5 pt-0 grid grid-cols-3 gap-2 mt-4';
+
+                actions.append(
+                    createActionButton('QR', 'fa-qrcode', 'brand', () => generateDogQR(dog.id)),
+                    createActionButton('Edit', 'fa-pen', 'slate', () => openDogModal(dog.id)),
+                    createActionButton('', 'fa-trash', 'red', () => deleteDog(dog.id))
+                );
+
+                card.append(content, actions);
+                container.appendChild(card);
+
+            });
+
+        }
+
+        // CREATE ACTION BUTTON
+        function createActionButton(label, icon, color, callback) {
+
+            const button = document.createElement('button');
+
+            const styles = {
+                brand: 'bg-brand-50 hover:bg-brand-100 text-brand-700',
+                slate: 'bg-slate-100 hover:bg-slate-200 text-slate-700',
+                red: 'bg-slate-50 hover:bg-red-50 text-slate-500 hover:text-red-600'
+            };
+
+            button.className =
+                `w-full ${styles[color]} text-xs font-bold py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1`;
+
+            const iconElement = document.createElement('i');
+            iconElement.className = `fa-solid ${icon}`;
+
+            button.appendChild(iconElement);
+
+            if (label) {
+                button.appendChild(document.createTextNode(' ' + label));
+            }
+
+            button.addEventListener('click', callback);
+
+            return button;
+
+        }
+
+        // OPEN DOG MODAL
+        function openDogModal(id = null) {
+
+            const modal = document.getElementById('modal-dog');
+            const form = document.getElementById('form-dog');
+
+            form.reset();
+
+            if (id) {
+
+                const dog = dogsList.find(d => d.id === id);
+
+                if (dog) {
+
+                    document.getElementById('modal-title').textContent =
+                        'Edit Dog Details';
+
+                    document.getElementById('dog-id').value = dog.id;
+                    document.getElementById('dog-name').value = dog.name;
+                    document.getElementById('dog-breed').value = dog.breed;
+                    document.getElementById('dog-age').value = dog.age;
+                    document.getElementById('dog-gender').value = dog.gender;
+                    document.getElementById('dog-owner').value = dog.owner;
+                    document.getElementById('dog-phone').value = dog.phone;
+                    document.getElementById('dog-photo-url').value = dog.photo || '';
+                    document.getElementById('dog-notes').value = dog.notes || '';
+
+                }
+
+            } else {
+
+                document.getElementById('modal-title').textContent =
+                    'Register New Dog';
+
+                document.getElementById('dog-id').value = '';
+
+            }
+
+            modal.classList.remove('hidden');
+
+        }
+
+        // CLOSE DOG MODAL
+        function closeDogModal() {
+            document.getElementById('modal-dog').classList.add('hidden');
+        }
+
+        // CLOSE QR MODAL
+        function closeQRModal() {
+            document.getElementById('modal-qr').classList.add('hidden');
+        }
+
+        // SAVE DOG
+        function handleSaveDog(event) {
+
+            event.preventDefault();
+
+            const existingId = document.getElementById('dog-id').value;
+
+            const dogData = {
+
+                id: existingId || 'dog_' + Date.now(),
+
+                name: document.getElementById('dog-name').value.trim(),
+                breed: document.getElementById('dog-breed').value.trim(),
+                age: document.getElementById('dog-age').value.trim(),
+                gender: document.getElementById('dog-gender').value,
+                owner: document.getElementById('dog-owner').value.trim(),
+                phone: document.getElementById('dog-phone').value.trim(),
+
+                photo:
+                    document.getElementById('dog-photo-url').value.trim() ||
+                    DEFAULT_DOG_PHOTO,
+
+                notes: document.getElementById('dog-notes').value.trim()
+
+            };
+
+            if (existingId) {
+
+                const index = dogsList.findIndex(d => d.id === existingId);
+
+                if (index !== -1) {
+                    dogsList[index] = dogData;
+                }
+
+                showToast('Dog profile updated!');
+
+            } else {
+
+                dogsList.push(dogData);
+                showToast('Dog registered successfully!');
+
+            }
+
+            saveUserDogs();
+            closeDogModal();
+            renderDogsGrid();
+
+        }
+
+        // DELETE DOG
+        function deleteDog(id) {
+
+            if (confirm('Are you sure you want to delete this dog profile?')) {
+
+                dogsList = dogsList.filter(d => d.id !== id);
+
+                saveUserDogs();
+                renderDogsGrid();
+
+                showToast('Dog profile deleted');
+
+            }
+
+        }
+
+        // GENERATE QR CODE
+        function generateDogQR(id) {
+
+            const dog = dogsList.find(d => d.id === id);
+
+            if (!dog) return;
+
+            const qrPayload = {
+                ...dog,
+                photo: dog.photo && dog.photo.startsWith('data:') ? '' : dog.photo
+            };
+
+            const encodedData = encodeURIComponent(JSON.stringify(qrPayload));
+
+            const baseUrl = window.location.href.split('?')[0];
+
+            activeQRUrl = `${baseUrl}?dogData=${encodedData}`;
+
+            const container = document.getElementById('qrcode-target');
+
+            container.innerHTML = '';
+
+            new QRCode(container, {
+
+                text: activeQRUrl,
+                width: 200,
+                height: 200,
+                colorDark: '#0f172a',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+
+            });
+
+            document.getElementById('modal-qr').classList.remove('hidden');
+
+        }
+
+        // DISPLAY PUBLIC DOG CARD
+        function displayPublicDogCard(dog) {
+
+            document.getElementById('pub-name').textContent = dog.name || 'Unknown Dog';
+
+            document.getElementById('pub-breed-badge').textContent =
+                dog.breed || 'Breed not specified';
+
+            document.getElementById('pub-age').textContent =
+                dog.age || 'Not specified';
+
+            document.getElementById('pub-gender').textContent =
+                dog.gender || 'Not specified';
+
+            document.getElementById('pub-owner-name').textContent =
+                dog.owner || 'Not specified';
+
+            document.getElementById('pub-photo').src =
+                dog.photo || 'https://placehold.co/600x400';
+
+            document.getElementById('pub-notes').textContent =
+                dog.notes || 'No special medical instructions provided.';
+
+            const phone = String(dog.phone || '').replace(/[^0-9]/g, '');
+
+            document.getElementById('pub-phone-link').href =
+                phone ? `tel:${phone}` : '#';
+
+            document.getElementById('pub-whatsapp-link').href =
+                phone ? `https://wa.me/${phone}` : '#';
+
+            navigateTo('public');
+
+        }
+
+        // DOWNLOAD QR CODE
+        function downloadQRCode() {
+
+            const canvas = document.querySelector('#qrcode-target canvas');
+
+            if (!canvas) return;
+
+            const link = document.createElement('a');
+
+            link.download = 'dog-safety-qr.png';
+            link.href = canvas.toDataURL('image/png');
+
+            link.click();
+
+        }
+
+        // COPY QR LINK
+        async function copyQRLink() {
+
+            try {
+
+                await navigator.clipboard.writeText(activeQRUrl);
+
+                showToast('Public profile link copied!');
+
+            } catch (error) {
+
+                showToast('Unable to copy link. Please copy it manually.');
+
+            }
+
+        }
+
+        // TOAST NOTIFICATION
+        function showToast(message) {
+
+            const container = document.getElementById('toast-container');
+
+            const toast = document.createElement('div');
+
+            toast.className =
+                'bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-lg flex items-center gap-2';
+
+            const icon = document.createElement('i');
+            icon.className = 'fa-solid fa-circle-check text-emerald-400';
+
+            const text = document.createElement('span');
+            text.textContent = message;
+
+            toast.append(icon, text);
+
+            container.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 3000);
+
+        }
+
+    </script>
 
 </body>
 </html>
