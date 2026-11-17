@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,6 +40,27 @@ body {
     font-size: 13px;
     letter-spacing: 1px;
     color: #e2e8f0;
+}
+
+/* USER UPPER BANNER */
+.user-upper-bar {
+    background: #eff6ff;
+    border-bottom: 1px solid #dbeafe;
+    padding: 10px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.user-upper-bar span {
+    color: #1e40af;
+    font-weight: bold;
+}
+
+.user-upper-bar button {
+    padding: 6px 12px;
+    font-size: 12px;
 }
 
 /* NAVIGATION */
@@ -221,6 +241,12 @@ footer strong {
     .developer-banner h1 {
         font-size: 25px;
     }
+
+    .user-upper-bar {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
 }
 </style>
 </head>
@@ -232,6 +258,12 @@ footer strong {
     <h1>SHAIL PATEL</h1>
     <p>WEBSITE DESIGNED & DEVELOPED BY</p>
     <p>Developer of PawsID</p>
+</div>
+
+<!-- USER UPPER BAR -->
+<div class="user-upper-bar">
+    <div>👤 Welcome, <span id="displayUserName">Guest User</span></div>
+    <button class="secondary" onclick="changeUserName()">Change Name</button>
 </div>
 
 <nav>
@@ -300,6 +332,7 @@ footer strong {
 
 <script>
 const STORAGE_KEY = "paws_dogs_directory";
+const USER_KEY = "paws_user_name";
 
 let dogs = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 let editingId = null;
@@ -324,6 +357,26 @@ function escapeHTML(value) {
 
 function makeId() {
     return "DOG-" + Date.now().toString(36).toUpperCase();
+}
+
+function loadUserName() {
+    let savedName = localStorage.getItem(USER_KEY);
+    if (!savedName) {
+        savedName = prompt("Please enter your name for the upper user panel:", "Dog Lover");
+        if (!savedName || savedName.trim() === "") {
+            savedName = "Guest User";
+        }
+        localStorage.setItem(USER_KEY, savedName.trim());
+    }
+    document.getElementById("displayUserName").textContent = savedName;
+}
+
+function changeUserName() {
+    let newName = prompt("Enter new user name:", localStorage.getItem(USER_KEY) || "");
+    if (newName && newName.trim() !== "") {
+        localStorage.setItem(USER_KEY, newName.trim());
+        document.getElementById("displayUserName").textContent = newName.trim();
+    }
 }
 
 function renderDogs() {
@@ -513,6 +566,7 @@ function showPublicProfile(id) {
     document.getElementById("app").classList.add("hidden");
     document.querySelector("nav").classList.add("hidden");
     document.querySelector(".hero").classList.add("hidden");
+    document.querySelector(".user-upper-bar").classList.add("hidden");
 
     const profile = document.getElementById("publicProfile");
     profile.classList.remove("hidden");
@@ -564,6 +618,7 @@ function showPublicProfile(id) {
 }
 
 function initialize() {
+    loadUserName();
     const params = new URLSearchParams(window.location.search);
     const dogId = params.get("id");
 
